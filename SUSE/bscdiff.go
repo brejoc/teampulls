@@ -1,6 +1,6 @@
-// bscdiff compares bsc numbers from a source changelog, to a target changelog.
-// Missing bsc numbers are then printed with their occurrence in the source
-// changelog.
+// bscdiff compares bsc, issue and CVE numbers from a source changelog, to a
+// target changelog. Missing numbers are then printed with their occurrence
+// in the source changelog.
 //
 // Usage: bscdiff <source_file> <target_file>
 
@@ -30,6 +30,13 @@ func main() {
 		`(CVE-(1999|2\d{3})-(0\d{2}[1-9]|[1-9]\d{3,}))`}
 
 	args := os.Args
+
+	if args[1] == "-h" {
+		fmt.Println("bscdiff compares bsc, issue and CVE numbers from a source changelog,\nto a target changelog. Missing numbers are then printed with their\noccurrence in the source changelog\n")
+		fmt.Println(fmt.Sprintf("usage: %s <source_file> <target_file>\n", args[0]))
+		os.Exit(0)
+	}
+
 	if len(args) < 3 {
 		fmt.Fprintf(os.Stderr, "usage: %s <source_file> <target_file>", args[0])
 		os.Exit(1)

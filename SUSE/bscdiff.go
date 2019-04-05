@@ -1,3 +1,9 @@
+// bscdiff compares BSC numbers from a source changelog, to a target changelog.
+// Missing bsc numbers are then printed with their occurrence in the source
+// changelog.
+//
+// Usage: bscdiff <source_file> <target_file>
+
 package main
 
 import (
@@ -24,7 +30,6 @@ func main() {
 	searchResults1 := scanFile(args[1])
 	searchResults2 := scanFile(args[2])
 	missingBscs := findMissingBsc(searchResults1, searchResults2)
-	missingBscs = removeDuplicates(missingBscs)
 	prettyPrintMissingBscs(searchResults1, missingBscs)
 }
 
@@ -61,7 +66,7 @@ func findMissingBsc(changelog1 []searchResult, changelog2 []searchResult) []stri
 			missingBscs = append(missingBscs, bsc)
 		}
 	}
-	return missingBscs
+	return removeDuplicates(missingBscs)
 }
 
 // Extracts the BSC numbers from the search results and returns them as an array.

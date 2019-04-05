@@ -1,4 +1,4 @@
-// bscdiff compares BSC numbers from a source changelog, to a target changelog.
+// bscdiff compares bsc numbers from a source changelog, to a target changelog.
 // Missing bsc numbers are then printed with their occurrence in the source
 // changelog.
 //
@@ -20,13 +20,29 @@ type searchResult struct {
 	text  string
 }
 
+var regexStrings []string
+
 func main() {
+	// These are the regex-strings that will be used later on.
+	regexStrings = []string{
+		`bsc#\d*`,
+		`U#\d*`,
+		`(CVE-(1999|2\d{3})-(0\d{2}[1-9]|[1-9]\d{3,}))`}
+
 	args := os.Args
 	if len(args) < 3 {
 		fmt.Fprintf(os.Stderr, "usage: %s <source_file> <target_file>", args[0])
 		os.Exit(1)
 	}
-	// TOOD: Check if files are actually existing.
+
+	// Check if files are actually there… and files.
+	for _, file := range os.Args[1:3] {
+		if !fileExists(file) {
+			fmt.Fprintf(os.Stderr, "%s does not exist!", file)
+			os.Exit(1)
+		}
+	}
+
 	searchResults1 := scanFile(args[1])
 	searchResults2 := scanFile(args[2])
 	missingBscs := findMissingBsc(searchResults1, searchResults2)
@@ -47,7 +63,6 @@ func prettyPrintMissingBscs(searchResults1 []searchResult, missingBscs []string)
 			}
 		}
 	}
-
 }
 
 // Returns a list of BSC numbers, that are missing from the second changelog file.
@@ -80,22 +95,29 @@ func getBscs(res []searchResult) []string {
 	return bsc
 }
 
-// Scans the file for BSC numbers and returns the search results.
+// Scans the file for bsc, CVE and issue numbers and returns the search results.
 func scanFile(pathToFile string) []searchResult {
-	var re, _ = regexp.Compile(`bsc#\d*`)
+	var regexes []*regexp.Regexp
+	// creating the regexes with the regex-strings from main().
+	for _, regexString := range regexStrings {
+		var re, _ = regexp.Compile(regexString)
+		regexes = append(regexes, re)
+	}
 	lines, err := scanLines(pathToFile)
 	if err != nil {
 		panic(err)
 	}
 	var searchResults []searchResult
 	for i, line := range lines {
-		results := re.FindAllString(line, -1)
-		if len(results) > 0 {
-			res := searchResult{
-				line:  i + 1,
-				match: results,
-				text:  line}
-			searchResults = append(searchResults, res)
+		for _, re := range regexes {
+			results := re.FindAllString(line, -1)
+			if len(results) > 0 {
+				res := searchResult{
+					line:  i + 1,
+					match: results,
+					text:  line}
+				searchResults = append(searchResults, res)
+			}
 		}
 	}
 	return searchResults
@@ -117,7 +139,7 @@ func scanLines(path string) ([]string, error) {
 	return lines, nil
 }
 
-// Removed duplicates form an array.
+// Removes duplicates form an array.
 func removeDuplicates(s []string) []string {
 	m := make(map[string]bool)
 	for _, item := range s {
@@ -132,4 +154,14 @@ func removeDuplicates(s []string) []string {
 		result = append(result, item)
 	}
 	return result
+}
+
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }

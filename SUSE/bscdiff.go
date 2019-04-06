@@ -31,8 +31,11 @@ func main() {
 
 	args := os.Args
 
-	if args[1] == "-h" {
-		fmt.Println("bscdiff compares bsc, issue and CVE numbers from a source changelog,\nto a target changelog. Missing numbers are then printed with their\noccurrence in the source changelog\n")
+	if len(args) > 1 && (args[1] == "-h" || args[1] == "--help") {
+		fmt.Println("bscdiff compares bsc, issue and CVE numbers from a source changelog, ")
+		fmt.Println("to a target changelog. Missing numbers are then printed with their ")
+		fmt.Println("occurrence in the source changelog")
+		fmt.Println()
 		fmt.Println(fmt.Sprintf("usage: %s <source_file> <target_file>\n", args[0]))
 		os.Exit(0)
 	}

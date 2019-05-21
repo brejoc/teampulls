@@ -14,6 +14,10 @@ __license__ = "GPLv3"
 import os
 import requests
 import sys
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+from dateutil import parser
 
 usernames = (
     "brejoc",
@@ -38,6 +42,10 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def get_prs_for_user(username):
+    """\
+    Fetches the pull requests for the given user and returns
+    the data set as a dict.
+    """
     query = """
     {
     user(login: "%s") {
@@ -72,6 +80,20 @@ def get_prs_for_user(username):
     return r.json()
 
 
+def get_colour_coding_for_pr(pr, days=14):
+    """\
+    Returns the colour code needed to print to the CLI.
+    The colour is green, unless the pr is > `days` old.
+    """
+    created_at = parser.parse(pr['createdAt'])
+    now = datetime.now(timezone.utc)
+    age = now - created_at
+    colour = bcolors.OKGREEN
+    if age > timedelta(days=days):
+        colour = bcolors.FAIL
+    return colour
+
+
 if __name__ == "__main__":
     for username in usernames:
         data = get_prs_for_user(username)
@@ -86,7 +108,7 @@ if __name__ == "__main__":
             if repo not in repos:
                 continue
             url = pr['url']
-            print("{}{}{}".format(bcolors.OKGREEN, title, bcolors.ENDC))
+            print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
             print("🔗 {}".format(url))
             if i+1 == len(pull_requests):
                 print()

@@ -12,8 +12,8 @@ __email__  = "jbreuer@suse.de"
 __license__ = "GPLv3"
 
 import os
-import requests
 import sys
+import requests
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
@@ -41,7 +41,8 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def get_prs_for_user(username):
+
+def get_prs_for_user(username, api_token):
     """\
     Fetches the pull requests for the given user and returns
     the data set as a dict.
@@ -73,7 +74,6 @@ def get_prs_for_user(username):
     """ % username
     url = 'https://api.github.com/graphql'
     json = { 'query' : query }
-    api_token = os.environ.get('GITHUB_TOKEN_GALAXY')
     headers = {'Authorization': 'token %s' % api_token}
 
     r = requests.post(url=url, json=json, headers=headers)
@@ -95,8 +95,12 @@ def get_colour_coding_for_pr(pr, days=14):
 
 
 if __name__ == "__main__":
+    api_token = os.environ.get('GITHUB_TOKEN_GALAXY')
+    if not api_token:
+        sys.stderr.write("Please provide a Github API token via environment variable `GITHUB_TOKEN_GALAXY`.")
+        sys.exit(1)
     for username in usernames:
-        data = get_prs_for_user(username)
+        data = get_prs_for_user(username, api_token)
         print("{}{}{}".format(bcolors.OKBLUE, data['data']['user']['name'], bcolors.ENDC))
         print("=" * 80)
         pull_requests = data['data']['user']['pullRequests']['nodes']
@@ -111,7 +115,6 @@ if __name__ == "__main__":
             print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
             print("🔗 {}".format(url))
             if i+1 == len(pull_requests):
-                print()
-                print()
+                print("\n")
                 continue
             print("-" * 80)

@@ -106,7 +106,7 @@ def get_settings():
         print("Could not find settings file in any of these locations: {}".format(", ".join(paths)))
         sys.exit(3)
     if "usernames" not in settings:
-        print("usernames definition missing in settings file: repos = [\"bob\", \"alice\"]", file=sys.stderr)
+        print("usernames definition missing in settings file: usernames = [\"bob\", \"alice\"]", file=sys.stderr)
         sys.exit(2)
     if "repos" not in settings:
         print("repos definition missing in settings file: repos = [\"foo/prj\", \"bar/prj\"]", file=sys.stderr)

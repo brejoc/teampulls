@@ -119,6 +119,13 @@ def get_settings():
     return usernames, repos, github_token
 
 
+def filter_prs_by_repos(pull_requests, repos):
+    """\
+    Returns only the pull requests that are listed in repos.
+    """
+    return [pull_request for pull_request in pull_requests if pull_request['repository']['nameWithOwner'] in repos]
+
+
 if __name__ == "__main__":
     api_token = None
     usernames, repos, api_token = get_settings()
@@ -131,7 +138,7 @@ if __name__ == "__main__":
         data = get_prs_for_user(username, api_token)
         print("{}{}{}".format(bcolors.OKBLUE, data['data']['user']['name'], bcolors.ENDC))
         print("=" * 80)
-        pull_requests = data['data']['user']['pullRequests']['nodes']
+        pull_requests = filter_prs_by_repos(data['data']['user']['pullRequests']['nodes'], repos)
         if len(pull_requests) == 0:
             print("No pull requests!")
         for i, pr in enumerate(pull_requests):

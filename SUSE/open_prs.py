@@ -29,6 +29,7 @@ repos = (
     "openSUSE/salt",
     "cobbler/cobbler",
     "uyuni-project/uyuni",
+    "SUSE/spacewalk",
 )
 
 class bcolors:

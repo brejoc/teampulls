@@ -13,23 +13,14 @@ __license__ = "GPLv3"
 
 import os
 import sys
+import toml
 import requests
+from os.path import expanduser
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 from dateutil import parser
 
-usernames = (
-    "brejoc",
-    "dincamihai",
-    "meaksh",
-)
-repos = (
-    "saltstack/salt",
-    "openSUSE/salt",
-    "cobbler/cobbler",
-    "uyuni-project/uyuni",
-)
 
 class bcolors:
     HEADER = '\033[95m'
@@ -94,10 +85,47 @@ def get_colour_coding_for_pr(pr, days=14):
     return colour
 
 
+def get_settings():
+    """\
+    Loads TOML settings from the provided file and returns a usernames and
+    repos.
+    """
+    paths = (
+        "./.open_prs.toml",
+        "./open_prs.toml",
+        "~/.open_prs.toml",
+        "~/.config/open_prs.toml",
+        "/etc/open_prs.toml",
+    )
+    settings = None
+    for path in paths:
+        path = expanduser(path)
+        if os.path.isfile(path) and not os.path.isdir(path) and not os.path.islink(path):
+            settings = toml.load(path)
+    if not settings:
+        print("Could not find settings file in any of these locations: {}".format(", ".join(paths)))
+        sys.exit(3)
+    if "usernames" not in settings:
+        print("usernames definition missing in settings file: repos = [\"bob\", \"alice\"]", file=sys.stderr)
+        sys.exit(2)
+    if "repos" not in settings:
+        print("repos definition missing in settings file: repos = [\"foo/prj\", \"bar/prj\"]", file=sys.stderr)
+        sys.exit(2)
+    usernames = settings['usernames']
+    repos = settings['repos']
+    github_token = None
+    if "github_token" in settings:
+        github_token = settings['github_token']
+    return usernames, repos, github_token
+
+
 if __name__ == "__main__":
-    api_token = os.environ.get('GITHUB_TOKEN_GALAXY')
+    api_token = None
+    usernames, repos, api_token = get_settings()
     if not api_token:
-        sys.stderr.write("Please provide a Github API token via environment variable `GITHUB_TOKEN_GALAXY`.")
+        api_token = os.environ.get('GITHUB_TOKEN_GALAXY')
+    if not api_token:
+        print("Please provide a Github API token via environment variable `GITHUB_TOKEN_GALAXY` or via settings file.", file=sys.stderr)
         sys.exit(1)
     for username in usernames:
         data = get_prs_for_user(username, api_token)

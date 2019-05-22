@@ -88,7 +88,7 @@ def get_colour_coding_for_pr(pr, days=14):
 def get_settings():
     """\
     Loads TOML settings from the provided file and returns a usernames and
-    repos.
+    repos. Optionally also the Github API token.
     """
     paths = (
         "./.open_prs.toml",

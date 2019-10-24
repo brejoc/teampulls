@@ -23,4 +23,4 @@ At first you'll have to switch to the virtualenv again if you haven't done so al
 
 Now you can execute the script:
 
-<img src="https://raw.githubusercontent.com/brejoc/misc/master/SUSE/open_prs/doc/screenshot1.png" />
+<img src="https://raw.githubusercontent.com/brejoc/teampulls/master/doc/screenshot1.png" />

@@ -149,7 +149,7 @@ if __name__ == "__main__":
     api_token = None
     usernames, repos, api_token = get_settings()
     if not api_token:
-        api_token = os.environ.get("GITHUB_TOKEN_GALAXY")
+        api_token = os.environ.get("GITHUB_TOKEN_GALAXY") or os.environ.get("GITHUB_TOKEN")
     if not api_token:
         print(
             "Please provide a Github API token via environment variable `GITHUB_TOKEN_GALAXY` or via settings file.",

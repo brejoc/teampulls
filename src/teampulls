@@ -50,6 +50,7 @@ def get_prs_for_user(username, api_token):
                 id
                 nameWithOwner
                 }
+                isDraft
                 createdAt
                 number
                 title
@@ -66,7 +67,10 @@ def get_prs_for_user(username, api_token):
     )
     url = "https://api.github.com/graphql"
     json = {"query": query}
-    headers = {"Authorization": "token %s" % api_token}
+    headers = {
+            "Authorization": "token %s" % api_token,
+            "Accept": "application/vnd.github.shadow-cat-preview+json",
+    }
 
     r = requests.post(url=url, json=json, headers=headers)
     return r.json()
@@ -80,9 +84,15 @@ def get_colour_coding_for_pr(pr, days=14):
     created_at = parser.parse(pr["createdAt"])
     now = datetime.now(timezone.utc)
     age = now - created_at
-    colour = bcolors.OKGREEN
+    if pr['isDraft']:
+        colour = bcolors.OKBLUE
+    else:
+        colour = bcolors.OKGREEN
     if age > timedelta(days=days):
-        colour = bcolors.FAIL
+        if pr['isDraft']:
+            colour = bcolors.WARNING
+        else:
+            colour = bcolors.FAIL
     return colour
 
 
@@ -107,6 +117,7 @@ def get_settings():
             and not os.path.islink(path)
         ):
             settings = toml.load(path)
+            break
     if not settings:
         print(
             "Could not find settings file in any of these locations:\n{}".format(

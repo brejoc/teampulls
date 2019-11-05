@@ -4,7 +4,7 @@
 teampulls lists all the open pull requests for the repositories provided in
 `repos` for the users specified in `usernames`.
 You have to have your Github API token in then environment variable
-`GITHUB_TOKEN_GALAXY`.
+`GITHUB_TOKEN` or in the config file: github_token = "<your-token>"
 """
 
 __author__ = "Jochen Breuer"

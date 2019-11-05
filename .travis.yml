@@ -1,0 +1,7 @@
+language: python
+dist: xenial
+python: 3.7
+cache: pip
+install: pip install -r requirements_devel.txt
+script:
+  make black-check

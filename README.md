@@ -6,9 +6,15 @@ teampulls lists all of the pull requests for a list of users and repositories. O
 
 ## Installation
 
+### Pypi
+
 ```
 pip install teampulls
 ```
+
+### openSUSE RPM package
+
+I'm currently building packages for Tumbleweed and Leap 15.1 on [OBS](https://software.opensuse.org/package/teampulls?search_term=teampulls). These packages ship the example config in `/etc/teampulls.toml`.
 
 ## Edit the settings file
 

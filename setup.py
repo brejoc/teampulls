@@ -8,7 +8,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='teampulls',
-    version='0.1.1',
+    version='0.2',
     packages=find_packages(".", exclude=["*.tests", "*.tests.*", "tests.*", "tests", "demo.*"]),
     package_dir = {'':'.'},
     scripts=['src/teampulls'],

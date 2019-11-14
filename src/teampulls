@@ -28,6 +28,7 @@ __docopt__ = """Usage: teampulls [-hu USER]
 -u --user   one or many users with comma separated
 """
 
+
 class bcolors:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
@@ -157,17 +158,19 @@ def filter_prs_by_repos(pull_requests, repos):
         if pull_request["repository"]["nameWithOwner"] in repos
     ]
 
+
 def validate_user_arguments(options):
     """\
     Validates and formats the arguments passed by the user.
     """
-    options_users = options.get('USER', None)
+    options_users = options.get("USER", None)
     if options_users:
         options_users = [user.strip() for user in options_users.split(",")]
 
     cleaned_options = {}
-    cleaned_options['USERS'] = options_users
+    cleaned_options["USERS"] = options_users
     return cleaned_options
+
 
 if __name__ == "__main__":
     options = docopt(__docopt__, help=True)
@@ -185,7 +188,7 @@ if __name__ == "__main__":
         )
         sys.exit(1)
     for username in usernames:
-        if cleaned_options['USERS'] and username not in cleaned_options['USERS']:
+        if cleaned_options["USERS"] and username not in cleaned_options["USERS"]:
             continue
         data = get_prs_for_user(username, api_token)
         print("{}{}{}".format(bcolors.OKBLUE, data["data"]["user"]["name"], bcolors.ENDC))

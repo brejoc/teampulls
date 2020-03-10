@@ -1,17 +1,11 @@
 # Please provide the github usernames here.
 usernames = [
     "brejoc",
-    "dincamihai",
-    "meaksh",
 ]
 
 # The repository name with owner: brejoc/my_repo
 repos = [
-    "saltstack/salt",
-    "openSUSE/salt",
-    "SUSE/spacewalk",
-    "cobbler/cobbler",
-    "uyuni-project/uyuni",
+    "brejoc/test"
 ]
 
 # The Github API token can either be provided here or via the environment

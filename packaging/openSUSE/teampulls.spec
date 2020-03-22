@@ -17,10 +17,10 @@
 
 
 Name:           teampulls
-Version:        0.2
+Version:        0.2.2
 Release:        0
-Summary:        teampulls lists all of the pull requests for a list of users and repositories. On top of that every pull requests that is older than 14 days is printed in red.
-License:        GPLv3
+Summary:        CLI tool that lists pull requests from GitHub
+License:        GPL-3.0-only
 Group:          Development/Languages/Python
 URL:            https://github.com/brejoc/teampulls
 Source:         %{name}-%{version}.tar.gz
@@ -54,6 +54,7 @@ install -Dpm 0644 teampulls.toml %{buildroot}%{_sysconfdir}/teampulls.toml
 
 %files
 %doc README.md
+%license LICENSE
 %{python3_sitelib}/*
 %{_bindir}/teampulls
 %config(noreplace) %attr(0644, root, root) %{_sysconfdir}/teampulls.toml

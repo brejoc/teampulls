@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Oct  2 16:06:30 UTC 2020 - jbreuer@suse.de
+
+- Version bump to 0.2.3. Target branch information are now shown.
+
+-------------------------------------------------------------------
 Sun Mar 22 18:11:15 UTC 2020 - jbreuer@suse.de
 
 - Version bump to 0.2.1, LICENSE file added, summary and

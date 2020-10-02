@@ -54,10 +54,11 @@ def get_prs_for_user(username, api_token):
             totalCount
             nodes {
                 repository {
-                id
-                nameWithOwner
+                    id
+                    nameWithOwner
                 }
                 isDraft
+                baseRefName
                 createdAt
                 number
                 title
@@ -204,8 +205,10 @@ if __name__ == "__main__":
             if repo not in repos:
                 continue
             url = pr["url"]
+            branch = pr["baseRefName"]
             print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
             print("🔗 {}".format(url))
+            print("🌿 {}".format(branch))
             if i + 1 == len(pull_requests):
                 print("\n")
                 continue

@@ -25,7 +25,7 @@ from docopt import docopt
 __docopt__ = """Usage: teampulls [-hu USER]
 
 -h --help   show this
--u --user   one or many users with comma separated
+-u --user   one or many users with comma separated: alice,bob,peter
 """
 
 
@@ -173,11 +173,38 @@ def validate_user_arguments(options):
     return cleaned_options
 
 
+def print_prs_detail(data):
+    """\
+    Printing details of PRs to stdout.
+    """
+    print("{}{}{}".format(bcolors.OKBLUE, data["data"]["user"]["name"], bcolors.ENDC))
+    print("=" * 80)
+    pull_requests = filter_prs_by_repos(
+        data["data"]["user"]["pullRequests"]["nodes"], repos
+    )
+    if len(pull_requests) == 0:
+        print("No pull requests!")
+    for i, pr in enumerate(pull_requests):
+        title = pr["title"]
+        repo = pr["repository"]["nameWithOwner"]
+        if repo not in repos:
+            continue
+        url = pr["url"]
+        branch = pr["baseRefName"]
+        print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
+        print("🔗 {}".format(url))
+        print("🌿 {}".format(branch))
+        if i + 1 == len(pull_requests):
+            print("\n")
+            continue
+        print("-" * 80)
+
+
 if __name__ == "__main__":
     options = docopt(__docopt__, help=True)
     cleaned_options = validate_user_arguments(options)
     api_token = None
-    usernames, repos, api_token = get_settings()
+    config_usernames, repos, api_token = get_settings()
     if not api_token:
         api_token = os.environ.get("GITHUB_TOKEN_GALAXY") or os.environ.get(
             "GITHUB_TOKEN"
@@ -188,28 +215,14 @@ if __name__ == "__main__":
             file=sys.stderr,
         )
         sys.exit(1)
+
+    if cleaned_options["USERS"]:
+        # We got a list of users from the cli.
+        usernames = cleaned_options["USERS"]
+    else:
+        # Using users from the config.
+        usernames = config_usernames
+
     for username in usernames:
-        if cleaned_options["USERS"] and username not in cleaned_options["USERS"]:
-            continue
         data = get_prs_for_user(username, api_token)
-        print("{}{}{}".format(bcolors.OKBLUE, data["data"]["user"]["name"], bcolors.ENDC))
-        print("=" * 80)
-        pull_requests = filter_prs_by_repos(
-            data["data"]["user"]["pullRequests"]["nodes"], repos
-        )
-        if len(pull_requests) == 0:
-            print("No pull requests!")
-        for i, pr in enumerate(pull_requests):
-            title = pr["title"]
-            repo = pr["repository"]["nameWithOwner"]
-            if repo not in repos:
-                continue
-            url = pr["url"]
-            branch = pr["baseRefName"]
-            print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
-            print("🔗 {}".format(url))
-            print("🌿 {}".format(branch))
-            if i + 1 == len(pull_requests):
-                print("\n")
-                continue
-            print("-" * 80)
+        print_prs_detail(data)

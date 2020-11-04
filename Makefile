@@ -1,10 +1,10 @@
 all: black
 
 black:
-	black --line-length 90 src/teampulls
+	black --line-length 90 teampulls/
 
 black-check:
-	black --check --line-length 90 src/teampulls
+	black --check --line-length 90 teampulls/
 
 build: black-check
 	python3 setup.py sdist bdist_wheel

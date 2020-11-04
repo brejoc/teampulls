@@ -15,12 +15,15 @@ import os
 import sys
 import toml
 import requests
+from functools import partial
 from os.path import expanduser
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 from dateutil import parser
 from docopt import docopt
+from concurrent.futures import ThreadPoolExecutor as PoolExecutor
+
 
 __docopt__ = """Usage: teampulls [-hu USER]
 
@@ -173,7 +176,7 @@ def validate_user_arguments(options):
     return cleaned_options
 
 
-def print_prs_detail(data):
+def print_prs_detail(data, repos):
     """\
     Printing details of PRs to stdout.
     """
@@ -183,7 +186,7 @@ def print_prs_detail(data):
         data["data"]["user"]["pullRequests"]["nodes"], repos
     )
     if len(pull_requests) == 0:
-        print("No pull requests!")
+        print("No pull requests!\n")
     for i, pr in enumerate(pull_requests):
         title = pr["title"]
         repo = pr["repository"]["nameWithOwner"]
@@ -200,7 +203,7 @@ def print_prs_detail(data):
         print("-" * 80)
 
 
-if __name__ == "__main__":
+def main():
     options = docopt(__docopt__, help=True)
     cleaned_options = validate_user_arguments(options)
     api_token = None
@@ -223,6 +226,11 @@ if __name__ == "__main__":
         # Using users from the config.
         usernames = config_usernames
 
-    for username in usernames:
-        data = get_prs_for_user(username, api_token)
-        print_prs_detail(data)
+    get_prs_for_user_with_api_token = partial(get_prs_for_user, api_token=api_token)
+    with PoolExecutor(max_workers=8) as executor:
+        for data in executor.map(get_prs_for_user_with_api_token, usernames):
+            print_prs_detail(data, repos)
+
+
+if __name__ == "__main__":
+    main()

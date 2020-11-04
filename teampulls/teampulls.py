@@ -176,7 +176,7 @@ def validate_user_arguments(options):
     return cleaned_options
 
 
-def print_prs_detail(data):
+def print_prs_detail(data, repos):
     """\
     Printing details of PRs to stdout.
     """
@@ -203,7 +203,7 @@ def print_prs_detail(data):
         print("-" * 80)
 
 
-if __name__ == "__main__":
+def main():
     options = docopt(__docopt__, help=True)
     cleaned_options = validate_user_arguments(options)
     api_token = None
@@ -229,4 +229,8 @@ if __name__ == "__main__":
     get_prs_for_user_with_api_token = partial(get_prs_for_user, api_token=api_token)
     with PoolExecutor(max_workers=8) as executor:
         for data in executor.map(get_prs_for_user_with_api_token, usernames):
-            print_prs_detail(data)
+            print_prs_detail(data, repos)
+
+
+if __name__ == "__main__":
+    main()

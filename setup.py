@@ -11,7 +11,6 @@ setup(
     version='0.2.3',
     packages=find_packages(".", exclude=["*.tests", "*.tests.*", "tests.*", "tests", "demo.*"]),
     package_dir = {'':'.'},
-    scripts=['src/teampulls'],
     url='https://github.com/brejoc/teampulls',
     license='GPLv3',
     author='Jochen Breuer',
@@ -24,4 +23,9 @@ setup(
     long_description_content_type='text/markdown',
     keywords='Github Pull Requests team',
     platforms='any',
+    entry_points={
+        'console_scripts': [
+            'teampulls = teampulls.teampulls:main',
+        ],
+    },
 )

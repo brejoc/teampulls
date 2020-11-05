@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov  5 09:24:37 UTC 2020 - Jochen Breuer <jbreuer@suse.de>
+
+- Update to version 0.2.5
+  * Uses entrypoint instead of executable installation.
+  * Parallel requests via ThreadPoolExecutor for speed improvement.
+
+-------------------------------------------------------------------
 Tue Oct  6 14:33:45 UTC 2020 - jbreuer@suse.de
 
 - Version bump to 0.2.4. User flag is no longer tied to user being

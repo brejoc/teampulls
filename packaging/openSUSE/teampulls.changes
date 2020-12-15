@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Dec 15 14:29:41 UTC 2020 - Jochen Breuer <jbreuer@suse.de>
+
+- Update to version 0.2.6
+  * Source and target branch get printed now.
+
+-------------------------------------------------------------------
 Thu Nov  5 09:24:37 UTC 2020 - Jochen Breuer <jbreuer@suse.de>
 
 - Update to version 0.2.5

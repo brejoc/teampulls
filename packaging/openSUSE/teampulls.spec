@@ -17,7 +17,7 @@
 
 
 Name:           teampulls
-Version:        0.2.5
+Version:        0.2.6
 Release:        0
 Summary:        CLI tool that lists pull requests from GitHub
 License:        GPL-3.0-only

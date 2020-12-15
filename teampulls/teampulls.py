@@ -62,6 +62,7 @@ def get_prs_for_user(username, api_token):
                 }
                 isDraft
                 baseRefName
+                headRefName
                 createdAt
                 number
                 title
@@ -194,9 +195,10 @@ def print_prs_detail(data, repos):
             continue
         url = pr["url"]
         branch = pr["baseRefName"]
+        source_branch = pr["headRefName"]
         print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
         print("🔗 {}".format(url))
-        print("🌿 {}".format(branch))
+        print("🌿 {} ⟸  {}".format(branch, source_branch))
         if i + 1 == len(pull_requests):
             print("\n")
             continue

@@ -198,7 +198,7 @@ def print_prs_detail(data, repos):
         source_branch = pr["headRefName"]
         print("{}{}{}".format(get_colour_coding_for_pr(pr), title, bcolors.ENDC))
         print("🔗 {}".format(url))
-        print("🌿 {} ➡ {}{}{}".format(source_branch, bcolors.BOLD, branch, bcolors.ENDC))
+        print("🌿 {} ⬅ {}".format(branch, source_branch))
         if i + 1 == len(pull_requests):
             print("\n")
             continue

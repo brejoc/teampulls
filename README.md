@@ -14,7 +14,11 @@ pip install teampulls
 
 ### openSUSE RPM package
 
-I'm currently building packages for Tumbleweed and Leap 15.1 on [OBS](https://software.opensuse.org/package/teampulls?search_term=teampulls). These packages ship the example config in `/etc/teampulls.toml`.
+I'm currently building packages for Tumbleweed, Leap 15.1 and Leap 15.2 on [OBS](https://software.opensuse.org/package/teampulls?search_term=teampulls). These packages ship the example config in `/etc/teampulls.toml`.
+
+### Fedora
+
+teampulls is part of Fedora since Fedora 33.
 
 ## Edit the settings file
 

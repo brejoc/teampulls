@@ -1,4 +1,0 @@
-toml
-requests
-python-dateutil
-docopt

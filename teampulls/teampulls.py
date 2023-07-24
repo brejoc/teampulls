@@ -124,7 +124,14 @@ def get_settings():
     for path in paths:
         path = expanduser(path)
         if os.path.isfile(path) and not os.path.isdir(path) and not os.path.islink(path):
-            settings = toml.load(path)
+            try:
+                settings = toml.load(path)
+            except:
+                print(
+                    "TOML file at \"{}\" seems to be malformed".format(path),
+                    file=sys.stderr,
+                )
+                sys.exit(3)
             break
     if not settings:
         print(

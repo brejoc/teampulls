@@ -126,7 +126,7 @@ def get_settings():
         if os.path.isfile(path) and not os.path.isdir(path) and not os.path.islink(path):
             try:
                 settings = toml.load(path)
-            except:
+            except(toml.decoder.TomlDecodeError):
                 print(
                     "TOML file at \"{}\" seems to be malformed".format(path),
                     file=sys.stderr,

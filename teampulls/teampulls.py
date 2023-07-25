@@ -212,6 +212,15 @@ def print_prs_detail(data, repos):
         print("-" * 80)
 
 
+def print_user_error_message(data):
+    """\
+    Prints the user error message for a not existing user.
+    """
+    print("=" * 80, file=sys.stderr)
+    print(data["errors"][0]["message"], file=sys.stderr)
+    print("=" * 80, file=sys.stderr)
+
+
 def main():
     options = docopt(__docopt__, help=True)
     cleaned_options = validate_user_arguments(options)
@@ -238,7 +247,10 @@ def main():
     get_prs_for_user_with_api_token = partial(get_prs_for_user, api_token=api_token)
     with PoolExecutor(max_workers=8) as executor:
         for data in executor.map(get_prs_for_user_with_api_token, usernames):
-            print_prs_detail(data, repos)
+            if data["data"]["user"]:
+                print_prs_detail(data, repos)
+            else:
+                print_user_error_message(data)
 
 
 if __name__ == "__main__":

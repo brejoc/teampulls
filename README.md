@@ -24,7 +24,7 @@ teampulls is part of Fedora since Fedora 33.
 
 ## Edit the settings file
 
-Please copy the [`teampulls.toml`](https://github.com/brejoc/teampulls/blob/master/teampulls.toml) either to `/etc/teampulls.toml` or to `~/.teampulls.toml`. Now you'll have to add the users and repositories you are interested in. You also need a Github API token, that can either be set in the settings file or via the environment variable `GITHUB_TOKEN_GALAXY`.
+Please copy the [`teampulls.toml`](https://github.com/brejoc/teampulls/blob/master/teampulls.toml) either to `/etc/teampulls.toml` or to `~/.teampulls.toml`. Now you'll have to add the users and repositories you are interested in. You also need a Github API token, that can either be set in the settings file or via the environment variable `GITHUB_TOKEN`.
 
 ## Get the pull requests
 

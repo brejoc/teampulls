@@ -247,6 +247,11 @@ def main():
     get_prs_for_user_with_api_token = partial(get_prs_for_user, api_token=api_token)
     with PoolExecutor(max_workers=8) as executor:
         for data in executor.map(get_prs_for_user_with_api_token, usernames):
+            if "status" in data.keys():
+                # We did not get the expected answer. Something went wrong.^h^h
+                if data['status'] != 200:
+                    print("error: ", data['message'], file=sys.stderr)
+                    sys.exit(1)
             if data["data"]["user"]:
                 print_prs_detail(data, repos)
             else:

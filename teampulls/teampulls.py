@@ -44,21 +44,31 @@ class bcolors:
 
 
 def get_prs_for_user(username, api_token):
-    """\
-    Fetches the pull requests for the given user and returns
-    the data set as a dict.
     """
-    query = (
-        """
-        { user(login: "%s") {
+    Fetches all open pull requests for the given user using pagination.
+    """
+    url = "https://api.github.com/graphql"
+    headers = {
+        "Authorization": "token %s" % api_token,
+        "Accept": "application/vnd.github.shadow-cat-preview+json",
+    }
+    
+    all_pull_requests = []
+    has_next_page = True
+    end_cursor = None
+
+    while has_next_page:
+        query_template = """
+        query($username: String!, $endCursor: String) {
+          user(login: $username) {
             name
             login
-            pullRequests(first: 100, states: OPEN) {
-            totalCount
-            nodes {
+            pullRequests(first: 100, states: OPEN, after: $endCursor) {
+              totalCount
+              nodes {
                 repository {
-                    id
-                    nameWithOwner
+                  id
+                  nameWithOwner
                 }
                 isDraft
                 baseRefName
@@ -67,25 +77,52 @@ def get_prs_for_user(username, api_token):
                 number
                 title
                 url
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
             }
-                pageInfo {
-                    hasNextPage
-                    endCursor
+          }
+        }
+        """
+        
+        variables = {
+            "username": username,
+            "endCursor": end_cursor
+        }
+
+        request_data = {
+            "query": query_template,
+            "variables": variables
+        }
+
+        r = requests.post(url=url, json=request_data, headers=headers)
+        data = r.json()
+
+        if r.status_code != 200 or "errors" in data:
+            # Handle potential API errors
+            print(f"Error fetching data for user {username}: {data.get('errors', [{}])[0].get('message', 'Unknown error')}")
+            return None
+
+        pull_requests_data = data["data"]["user"]["pullRequests"]
+        all_pull_requests.extend(pull_requests_data["nodes"])
+        
+        has_next_page = pull_requests_data["pageInfo"]["hasNextPage"]
+        end_cursor = pull_requests_data["pageInfo"]["endCursor"]
+
+    return {
+        "data": {
+            "user": {
+                "name": data["data"]["user"]["name"],
+                "login": data["data"]["user"]["login"],
+                "pullRequests": {
+                    "totalCount": len(all_pull_requests),
+                    "nodes": all_pull_requests
                 }
             }
-        }}
-        """
-        % username
-    )
-    url = "https://api.github.com/graphql"
-    json = {"query": query}
-    headers = {
-        "Authorization": "token %s" % api_token,
-        "Accept": "application/vnd.github.shadow-cat-preview+json",
+        }
     }
-
-    r = requests.post(url=url, json=json, headers=headers)
-    return r.json()
 
 
 def get_colour_coding_for_pr(pr, days=14):

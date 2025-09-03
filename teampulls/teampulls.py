@@ -13,7 +13,6 @@ __license__ = "GPLv3"
 
 import os
 import sys
-import toml
 import requests
 from functools import partial
 from os.path import expanduser
@@ -23,6 +22,11 @@ from datetime import timezone
 from dateutil import parser
 from docopt import docopt
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
+
+if sys.version_info < (3, 11):
+    import tomli as tomllib
+else:
+    import tomllib
 
 
 __docopt__ = """Usage: teampulls [-hu USER]
@@ -125,8 +129,15 @@ def get_settings():
         path = expanduser(path)
         if os.path.isfile(path) and not os.path.isdir(path) and not os.path.islink(path):
             try:
-                settings = toml.load(path)
-            except toml.decoder.TomlDecodeError:
+                with open(path, "rb") as f:
+                    settings = tomllib.load(f)
+            except IOError:
+                print(
+                    "Could not read config at: \"{}\"".format(path),
+                    file=sys.stderr,
+                )
+                sys.exit(3)
+            except tomllib.TOMLDecodeError:
                 print(
                     "TOML file at \"{}\" seems to be malformed".format(path),
                     file=sys.stderr,
